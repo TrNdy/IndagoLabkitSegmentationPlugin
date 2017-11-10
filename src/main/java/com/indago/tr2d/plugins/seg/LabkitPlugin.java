@@ -3,12 +3,14 @@
  */
 package com.indago.tr2d.plugins.seg;
 
+import com.indago.IndagoLog;
 import com.indago.tr2d.ui.model.Tr2dModel;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.integer.IntType;
+import org.scijava.Context;
+import org.scijava.log.Logger;
+import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.util.List;
@@ -19,9 +21,12 @@ import java.util.List;
 @Plugin( type = Tr2dSegmentationPlugin.class, name = "Tr2d Labkit Segmentation" )
 public class LabkitPlugin implements Tr2dSegmentationPlugin {
 
+	@Parameter
+	private Context context;
+
 	private LabkitPanel panel;
 
-	public static Logger log = LoggerFactory.getLogger( LabkitPlugin.class );
+	public Logger log = IndagoLog.stderrLogger().subLogger("Tr2dLabkitPlugin");
 
 	@Override
 	public JPanel getInteractionPanel() {
@@ -35,7 +40,7 @@ public class LabkitPlugin implements Tr2dSegmentationPlugin {
 
 	@Override
 	public void setTr2dModel( final Tr2dModel model ) {
-		this.panel = new LabkitPanel(model, log);
+		this.panel = new LabkitPanel(context, model, log);
 	}
 
 	@Override
@@ -44,7 +49,7 @@ public class LabkitPlugin implements Tr2dSegmentationPlugin {
 	}
 
 	@Override
-	public Logger getLogger() {
-		return log;
+	public void setLogger(Logger logger) {
+		log = logger;
 	}
 }
