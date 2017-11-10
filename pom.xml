@@ -40,45 +40,12 @@
 			<version>0.1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>com.indago</groupId>
-			<artifactId>IndagoLoggingWrapper</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.indago</groupId>
-			<artifactId>Indago</artifactId>
-		</dependency>
-				<dependency>
-			<groupId>com.indago</groupId>
-			<artifactId>indago-ui-elements</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>sc.fiji</groupId>
-			<artifactId>bigdataviewer-vistools</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>sc.fiji</groupId>
-			<artifactId>bigdataviewer-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>sc.fiji</groupId>
-			<artifactId>Trainable_Segmentation</artifactId>
-		</dependency>
-		<dependency> <!-- needed dependency for trainable weka (dunno why this is not resolved automatically) -->
-			<groupId>sc.fiji</groupId>
-			<artifactId>imagescience</artifactId>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.miglayout</groupId>
 			<artifactId>miglayout</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.jgoodies</groupId>
-			<artifactId>jgoodies-common</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.univocity</groupId>
-			<artifactId>univocity-parsers</artifactId>
-			<type>jar</type>
 		</dependency>
 	</dependencies>
 
