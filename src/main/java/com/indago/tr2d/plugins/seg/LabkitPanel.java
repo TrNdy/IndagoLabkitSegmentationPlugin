@@ -35,24 +35,27 @@ public class LabkitPanel {
 
 	public JPanel getPanel() {
 		JPanel panel = new JPanel();
-		JButton store = new JButton("store");
+		JButton store = new JButton("recalculate");
 		store.addActionListener(l -> this.calculateOutputs());
 		panel.setLayout(new BorderLayout());
-		if( segmentation != null )
+		if( isUsable() )
 			panel.add( segmentation.getComponent());
 		panel.add(store, BorderLayout.PAGE_END);
 		return panel;
 	}
 
 	private void calculateOutputs() {
-		if( segmentation != null )
-			outputs = Collections.singletonList( segmentation.getSegmentation(new IntType()));
-		else
-			outputs = Collections.emptyList();
+		outputs = isUsable() && segmentation.isTrained() ?
+				Collections.singletonList( segmentation.getSegmentation(new IntType())) :
+				Collections.emptyList();
+	}
+
+	public boolean isUsable() {
+		return segmentation != null;
 	}
 
 	public List<RandomAccessibleInterval<IntType>> getOutputs() {
-		if(outputs == null)
+		if(outputs == null || outputs.isEmpty())
 			calculateOutputs();
 		return outputs;
 	}

@@ -26,7 +26,7 @@ public class LabkitPlugin implements Tr2dSegmentationPlugin {
 
 	private LabkitPanel panel;
 
-	public Logger log = IndagoLog.stderrLogger().subLogger("Tr2dLabkitPlugin");
+	public Logger log = IndagoLog.stdLogger().subLogger("Tr2dLabkitPlugin");
 
 	@Override
 	public JPanel getInteractionPanel() {
@@ -51,5 +51,10 @@ public class LabkitPlugin implements Tr2dSegmentationPlugin {
 	@Override
 	public void setLogger(Logger logger) {
 		log = logger;
+	}
+
+	@Override
+	public boolean isUsable() {
+		return panel.isUsable();
 	}
 }
