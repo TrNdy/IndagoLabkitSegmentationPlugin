@@ -1,6 +1,7 @@
 /**
  *
  */
+
 package com.indago.tr2d.plugins.seg;
 
 import com.indago.IndagoLog;
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  * @author Matthias Arzt
  */
-@Plugin( type = Tr2dSegmentationPlugin.class, name = "Tr2d Labkit Segmentation" )
+@Plugin(type = Tr2dSegmentationPlugin.class, name = "Tr2d Labkit Segmentation")
 public class LabkitPlugin implements Tr2dSegmentationPlugin {
 
 	@Parameter
@@ -34,12 +35,12 @@ public class LabkitPlugin implements Tr2dSegmentationPlugin {
 	}
 
 	@Override
-	public List< RandomAccessibleInterval< IntType > > getOutputs() {
+	public List<RandomAccessibleInterval<IntType>> getOutputs() {
 		return panel.getOutputs();
 	}
 
 	@Override
-	public void setTr2dModel( final Tr2dModel model ) {
+	public void setTr2dModel(final Tr2dModel model) {
 		this.panel = new LabkitPanel(context, model, log);
 	}
 

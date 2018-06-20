@@ -1,3 +1,4 @@
+
 package com.indago.tr2d.plugins.seg;
 
 import com.indago.io.ProjectFolder;
@@ -53,7 +54,7 @@ public class LabkitPluginDemo {
 	}
 
 	private static JFrame setupFrame() {
-		JFrame frame = new JFrame("Tr2d Labkit Segmentation Plugin Demo")	;
+		JFrame frame = new JFrame("Tr2d Labkit Segmentation Plugin Demo");
 		frame.setSize(1000, 1000);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		return frame;

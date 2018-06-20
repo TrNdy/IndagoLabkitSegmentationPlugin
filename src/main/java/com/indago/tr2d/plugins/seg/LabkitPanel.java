@@ -1,3 +1,4 @@
+
 package com.indago.tr2d.plugins.seg;
 
 import com.indago.tr2d.ui.model.Tr2dModel;
@@ -21,14 +22,17 @@ public class LabkitPanel {
 	public LabkitPanel(Context context, Tr2dModel model, Logger log) {
 		this.log = log;
 		boolean isTimeSeries = true;
-		segmentation = createSegmentationComponent( context, model, isTimeSeries );
+		segmentation = createSegmentationComponent(context, model, isTimeSeries);
 	}
 
-	private SegmentationComponent createSegmentationComponent( Context context, Tr2dModel model, boolean isTimeSeries )
+	private SegmentationComponent createSegmentationComponent(Context context,
+		Tr2dModel model, boolean isTimeSeries)
 	{
 		try {
-			return new SegmentationComponent( context, null, model.getRawData(), isTimeSeries );
-		} catch ( NoClassDefFoundError e ) {
+			return new SegmentationComponent(context, null, model.getRawData(),
+				isTimeSeries);
+		}
+		catch (NoClassDefFoundError e) {
 			return null;
 		}
 	}
@@ -38,16 +42,15 @@ public class LabkitPanel {
 		JButton store = new JButton("recalculate");
 		store.addActionListener(l -> this.calculateOutputs());
 		panel.setLayout(new BorderLayout());
-		if( isUsable() )
-			panel.add( segmentation.getComponent());
+		if (isUsable()) panel.add(segmentation.getComponent());
 		panel.add(store, BorderLayout.PAGE_END);
 		return panel;
 	}
 
 	private void calculateOutputs() {
-		outputs = isUsable() && segmentation.isTrained() ?
-				Collections.singletonList( segmentation.getSegmentation(new IntType())) :
-				Collections.emptyList();
+		outputs = isUsable() && segmentation.isTrained() ? Collections
+			.singletonList(segmentation.getSegmentation(new IntType())) : Collections
+				.emptyList();
 	}
 
 	public boolean isUsable() {
@@ -55,8 +58,7 @@ public class LabkitPanel {
 	}
 
 	public List<RandomAccessibleInterval<IntType>> getOutputs() {
-		if(outputs == null || outputs.isEmpty())
-			calculateOutputs();
+		if (outputs == null || outputs.isEmpty()) calculateOutputs();
 		return outputs;
 	}
 }
