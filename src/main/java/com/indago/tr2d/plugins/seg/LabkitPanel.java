@@ -3,7 +3,6 @@ package com.indago.tr2d.plugins.seg;
 
 import com.indago.tr2d.ui.model.Tr2dModel;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.labkit.SegmentationComponent;
 import net.imglib2.type.numeric.integer.IntType;
 import org.scijava.Context;
 import org.scijava.log.Logger;
@@ -21,16 +20,14 @@ public class LabkitPanel {
 
 	public LabkitPanel(Context context, Tr2dModel model, Logger log) {
 		this.log = log;
-		boolean isTimeSeries = true;
-		segmentation = createSegmentationComponent(context, model, isTimeSeries);
+		segmentation = createSegmentationComponent(context, model);
 	}
 
 	private SegmentationComponent createSegmentationComponent(Context context,
-		Tr2dModel model, boolean isTimeSeries)
+		Tr2dModel model)
 	{
 		try {
-			return new SegmentationComponent(context, null, model.getRawData(),
-				isTimeSeries);
+			return new SegmentationComponent(context, model.getRawData());
 		}
 		catch (NoClassDefFoundError e) {
 			return null;
@@ -48,9 +45,8 @@ public class LabkitPanel {
 	}
 
 	private void calculateOutputs() {
-		outputs = isUsable() && segmentation.isTrained() ? Collections
-			.singletonList(segmentation.getSegmentation(new IntType())) : Collections
-				.emptyList();
+		outputs = isUsable() ? segmentation.getSegmentations(new IntType())
+			: Collections.emptyList();
 	}
 
 	public boolean isUsable() {
