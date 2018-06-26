@@ -26,7 +26,10 @@ public class LabkitPanel {
 		Tr2dModel model)
 	{
 		try {
-			return new SegmentationComponent(context, model.getRawData());
+			SegmentationModel segmentationModel =
+					new SegmentationModel(model.getRawData(), context);
+			return new SegmentationComponent(
+					segmentationModel);
 		}
 		catch (NoClassDefFoundError e) {
 			return null;

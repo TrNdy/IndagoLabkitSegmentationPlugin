@@ -6,17 +6,13 @@ import net.imglib2.labkit.DefaultExtensible;
 import net.imglib2.labkit.Extensible;
 import net.imglib2.labkit.BasicLabelingComponent;
 import net.imglib2.labkit.actions.SelectClassifier;
-import net.imglib2.labkit.inputimage.DefaultInputImage;
 import net.imglib2.labkit.models.ColoredLabelsModel;
 import net.imglib2.labkit.panel.GuiUtils;
 import net.imglib2.labkit.panel.LabelPanel;
 import net.imglib2.labkit.panel.SegmenterPanel;
 import net.imglib2.labkit.segmentation.TrainClassifier;
-import net.imglib2.type.NativeType;
-import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.integer.IntType;
-import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.miginfocom.swing.MigLayout;
 import org.scijava.Context;
 
@@ -29,18 +25,16 @@ public class SegmentationComponent implements AutoCloseable {
 
 	private final JFrame dialogBoxOwner = null;
 
-	private BasicLabelingComponent labelingComponent;
+	private final BasicLabelingComponent labelingComponent;
 
 	private final Context context;
 
-	private SegmentationModel segmentationModel;
+	private final SegmentationModel segmentationModel;
 
-	public SegmentationComponent(Context context,
-		RandomAccessibleInterval<? extends NumericType<?>> image)
+	public SegmentationComponent(SegmentationModel segmentationModel)
 	{
-		this.context = context;
-		segmentationModel = new SegmentationModel(initInputImage(image, true),
-			context);
+		this.segmentationModel = segmentationModel;
+		this.context = segmentationModel.getContext();
 		labelingComponent = new BasicLabelingComponent(dialogBoxOwner,
 			segmentationModel.imageLabelingModel());
 		labelingComponent.addBdvLayer(new PredictionLayer(segmentationModel
@@ -48,15 +42,6 @@ public class SegmentationComponent implements AutoCloseable {
 		initActions();
 		JPanel leftPanel = initLeftPanel();
 		this.panel = initPanel(leftPanel, labelingComponent.getComponent());
-	}
-
-	private static DefaultInputImage initInputImage(
-		RandomAccessibleInterval<? extends NumericType<?>> image,
-		boolean isTimeSeries)
-	{
-		DefaultInputImage defaultInputImage = new DefaultInputImage(image);
-		defaultInputImage.setTimeSeries(isTimeSeries);
-		return defaultInputImage;
 	}
 
 	private void initActions() {

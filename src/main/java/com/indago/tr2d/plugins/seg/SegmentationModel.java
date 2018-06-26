@@ -4,6 +4,7 @@ package com.indago.tr2d.plugins.seg;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.cell.CellGrid;
 import net.imglib2.labkit.color.ColorMap;
+import net.imglib2.labkit.inputimage.DefaultInputImage;
 import net.imglib2.labkit.inputimage.InputImage;
 import net.imglib2.labkit.labeling.Labeling;
 import net.imglib2.labkit.models.DefaultHolder;
@@ -17,7 +18,6 @@ import net.imglib2.labkit.utils.LabkitUtils;
 import net.imglib2.realtransform.AffineTransform3D;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.integer.IntType;
-import net.imglib2.type.numeric.integer.UnsignedByteType;
 import org.scijava.Context;
 
 import java.util.ArrayList;
@@ -41,16 +41,28 @@ public class SegmentationModel implements
 
 	private Context context;
 
-	public SegmentationModel(InputImage image, Context context) {
+	public SegmentationModel(
+			RandomAccessibleInterval< ? extends NumericType< ? > > image,
+			Context context)
+	{
 		this.context = context;
-		this.inputImage = image;
-		this.compatibleImage = image.imageForSegmentation();
-		this.grid = LabkitUtils.suggestGrid(compatibleImage, image.isTimeSeries());
+		this.inputImage = initInputImage(image, true);
+		this.compatibleImage = inputImage.imageForSegmentation();
+		this.grid = LabkitUtils.suggestGrid(compatibleImage, inputImage.isTimeSeries());
 		MySegmentationItem segmentationItem = addSegmenter();
 		this.selectedSegmenter = new DefaultHolder<>(segmentationItem);
 		this.selectedSegmenter.notifier().add(this::selectedSegmenterChanged);
-		this.imageLabelingModel = new ImageLabelingModel(image.showable(),
+		this.imageLabelingModel = new ImageLabelingModel(inputImage.showable(),
 			segmentationItem.labeling(), true);
+	}
+
+	private static DefaultInputImage initInputImage(
+			RandomAccessibleInterval<? extends NumericType<?>> image,
+			boolean isTimeSeries)
+	{
+		DefaultInputImage defaultInputImage = new DefaultInputImage(image);
+		defaultInputImage.setTimeSeries(isTimeSeries);
+		return defaultInputImage;
 	}
 
 	private void selectedSegmenterChanged(MySegmentationItem segmentationItem) {
@@ -125,5 +137,9 @@ public class SegmentationModel implements
 
 	public ImageLabelingModel imageLabelingModel() {
 		return imageLabelingModel;
+	}
+
+	public Context getContext() {
+		return context;
 	}
 }

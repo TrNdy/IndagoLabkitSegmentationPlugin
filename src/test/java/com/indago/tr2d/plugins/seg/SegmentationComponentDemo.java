@@ -7,7 +7,6 @@ import net.imglib2.img.Img;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.integer.IntType;
-import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.view.Views;
 import net.miginfocom.swing.MigLayout;
 import org.scijava.Context;
@@ -29,7 +28,9 @@ public class SegmentationComponentDemo {
 		Img<? extends NumericType<?>> image = ImageJFunctions.wrap(new ImagePlus(
 			"/home/arzt/Documents/Notes/Tr2d/ProjectFiles/raw.tif"));
 		Context context = new Context();
-		segmenter = new SegmentationComponent(context, image);
+		SegmentationModel model =
+				new SegmentationModel(image, context);
+		segmenter = new SegmentationComponent(model);
 		frame.add(segmenter.getComponent());
 		frame.add(getBottomPanel(), BorderLayout.PAGE_END);
 		frame.setVisible(true);

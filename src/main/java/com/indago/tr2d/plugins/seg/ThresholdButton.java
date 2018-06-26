@@ -73,7 +73,7 @@ public class ThresholdButton {
 
 	public static void main(String... args) {
 		SegmentationModel segmentationModel = new SegmentationModel(
-			new DefaultInputImage(ArrayImgs.unsignedBytes(100, 100, 100)),
+			ArrayImgs.unsignedBytes(100, 100, 100),
 			new Context());
 		JFrame frame = new JFrame();
 		frame.add(new SegmenterPanel(segmentationModel, new ActionMap())
