@@ -6,6 +6,7 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.NumericType;
+import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.view.Views;
 import net.miginfocom.swing.MigLayout;
@@ -44,8 +45,8 @@ public class SegmentationComponentDemo {
 	}
 
 	private void showSegmentation() {
-		for (RandomAccessibleInterval<UnsignedByteType> segmentation : segmenter
-			.getSegmentations(new UnsignedByteType()))
+		for (RandomAccessibleInterval<IntType> segmentation : segmenter
+			.getSegmentations())
 		{
 			Views.iterable(segmentation).forEach(x -> x.mul(50));
 			ImageJFunctions.show(segmentation);

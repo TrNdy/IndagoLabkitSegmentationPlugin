@@ -2,6 +2,7 @@
 package com.indago.tr2d.plugins.seg;
 
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.Img;
 import net.imglib2.img.cell.CellImgFactory;
 import net.imglib2.labkit.labeling.Labeling;
 import net.imglib2.labkit.models.SegmentationModel;
@@ -9,8 +10,8 @@ import net.imglib2.labkit.models.DefaultHolder;
 import net.imglib2.labkit.models.Holder;
 import net.imglib2.labkit.models.SegmentationItem;
 import net.imglib2.labkit.segmentation.Segmenter;
-import net.imglib2.type.NativeType;
-import net.imglib2.type.numeric.IntegerType;
+import net.imglib2.type.numeric.integer.IntType;
+import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.util.ConstantUtils;
 import net.imglib2.view.Views;
@@ -28,21 +29,32 @@ public class MySegmentationItem extends SegmentationItem {
 
 	private final Holder<List<Double>> thresholds = new DefaultHolder<>(
 		Collections.singletonList(0.5));
+	private RandomAccessibleInterval< IntType > segmentation = null;
 
 	public MySegmentationItem(SegmentationModel model, Segmenter segmenter) {
 		super(model, segmenter);
 		this.model = model;
 		labeling = new Labeling(Arrays.asList("background", "foreground"), model
 			.image());
+		segmenter.listeners().add(ignore -> resetSegmentation());
+		thresholds.notifier().add(ignore -> resetSegmentation());
 	}
 
-	public <T extends IntegerType<T> & NativeType<T>> RandomAccessibleInterval<T>
-		apply(T type)
+	private void resetSegmentation() {
+		segmentation = null;
+	}
+
+	public RandomAccessibleInterval<IntType> getSegmentation()
 	{
+		if(segmentation == null)
+			segmentation = calculateSegmentation();
+		return segmentation;
+	}
+
+	private Img< IntType > calculateSegmentation() {
 		RandomAccessibleInterval<?> image = model.image();
-		RandomAccessibleInterval<T> labels = new CellImgFactory<>(type).create(
-			image);
-		RandomAccessibleInterval<DoubleType> dummy = ConstantUtils
+		Img<IntType> segmentation = new CellImgFactory<>(new IntType()).create( image);
+		RandomAccessibleInterval<DoubleType > dummy = ConstantUtils
 			.constantRandomAccessibleInterval(new DoubleType(), image.numDimensions(),
 				image);
 		RandomAccessibleInterval<DoubleType> probability = new CellImgFactory<>(
@@ -51,9 +63,9 @@ public class MySegmentationItem extends SegmentationItem {
 			probability);
 		segmenter().predict(image, probabilities);
 		DoubleToIntFunction thresholdFunction = thresholdFunction();
-		Views.interval(Views.pair(probability, labels), labels).forEach(pair -> pair
+		Views.interval(Views.pair(probability, segmentation), segmentation).forEach(pair -> pair
 			.getB().setInteger(thresholdFunction.applyAsInt(pair.getA().get())));
-		return labels;
+		return segmentation;
 	}
 
 	public DoubleToIntFunction thresholdFunction() {

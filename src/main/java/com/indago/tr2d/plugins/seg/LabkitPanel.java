@@ -16,7 +16,6 @@ public class LabkitPanel {
 
 	private final Logger log;
 	private final SegmentationComponent segmentation;
-	private List<RandomAccessibleInterval<IntType>> outputs;
 
 	public LabkitPanel(Context context, Tr2dModel model, Logger log) {
 		this.log = log;
@@ -36,17 +35,9 @@ public class LabkitPanel {
 
 	public JPanel getPanel() {
 		JPanel panel = new JPanel();
-		JButton store = new JButton("recalculate");
-		store.addActionListener(l -> this.calculateOutputs());
 		panel.setLayout(new BorderLayout());
 		if (isUsable()) panel.add(segmentation.getComponent());
-		panel.add(store, BorderLayout.PAGE_END);
 		return panel;
-	}
-
-	private void calculateOutputs() {
-		outputs = isUsable() ? segmentation.getSegmentations(new IntType())
-			: Collections.emptyList();
 	}
 
 	public boolean isUsable() {
@@ -54,7 +45,7 @@ public class LabkitPanel {
 	}
 
 	public List<RandomAccessibleInterval<IntType>> getOutputs() {
-		if (outputs == null || outputs.isEmpty()) calculateOutputs();
-		return outputs;
+		return isUsable() ? segmentation.getSegmentations()
+				: Collections.emptyList();
 	}
 }

@@ -15,6 +15,8 @@ import net.imglib2.labkit.segmentation.TrainClassifier;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.NumericType;
+import net.imglib2.type.numeric.integer.IntType;
+import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.miginfocom.swing.MigLayout;
 import org.scijava.Context;
 
@@ -97,10 +99,9 @@ public class SegmentationComponent implements AutoCloseable {
 		return labelingComponent.getActions();
 	}
 
-	public <T extends IntegerType<T> & NativeType<T>>
-		List<RandomAccessibleInterval<T>> getSegmentations(T type)
+	public List<RandomAccessibleInterval<IntType >> getSegmentations()
 	{
-		return segmentationModel.getSegmentations(type);
+		return segmentationModel.getSegmentations();
 	}
 
 	@Override

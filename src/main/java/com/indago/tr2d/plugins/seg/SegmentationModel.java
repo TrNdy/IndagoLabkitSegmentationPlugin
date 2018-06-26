@@ -15,9 +15,9 @@ import net.imglib2.labkit.segmentation.weka.TimeSeriesSegmenter;
 import net.imglib2.labkit.segmentation.weka.TrainableSegmentationSegmenter;
 import net.imglib2.labkit.utils.LabkitUtils;
 import net.imglib2.realtransform.AffineTransform3D;
-import net.imglib2.type.NativeType;
-import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.NumericType;
+import net.imglib2.type.numeric.integer.IntType;
+import net.imglib2.type.numeric.integer.UnsignedByteType;
 import org.scijava.Context;
 
 import java.util.ArrayList;
@@ -112,11 +112,10 @@ public class SegmentationModel implements
 		selectedSegmenter().get().train();
 	}
 
-	public <T extends IntegerType<T> & NativeType<T>>
-		List<RandomAccessibleInterval<T>> getSegmentations(T type)
+	public List<RandomAccessibleInterval<IntType>> getSegmentations()
 	{
 		Stream<MySegmentationItem> trainedSegmenters = getTrainedSegmenters();
-		return trainedSegmenters.map(segmenter -> segmenter.apply(type)).collect(
+		return trainedSegmenters.map(segmenter -> segmenter.getSegmentation()).collect(
 			Collectors.toList());
 	}
 
