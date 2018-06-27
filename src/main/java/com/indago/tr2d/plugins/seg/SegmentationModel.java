@@ -21,6 +21,7 @@ import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.integer.IntType;
 import org.scijava.Context;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -162,13 +163,20 @@ public class SegmentationModel implements
 	{
 		List<MySegmentationItem > result = new ArrayList<>();
 		for(int i = 0;;i++) {
-			ProjectFolder subFolder = projectFolder.addFolder(Integer.toString(i+1));
-			if(!subFolder.exists())
+			String foldername = Integer.toString(i + 1);
+			if(!subFolderExists(projectFolder, foldername))
 				break;
 			result.add(MySegmentationItem
-					.open(this, initClassifier(), context, subFolder));
+					.open(this, initClassifier(), context,
+							projectFolder.addFolder(foldername)));
 		}
 		replaceSegmentationItems(result);
+	}
+
+	private boolean subFolderExists(ProjectFolder projectFolder,
+			String foldername)
+	{
+		return new File(projectFolder.getFolder(), foldername).exists();
 	}
 
 	private void replaceSegmentationItems(List< MySegmentationItem > result) {
