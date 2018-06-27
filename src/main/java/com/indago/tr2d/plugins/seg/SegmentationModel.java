@@ -1,6 +1,7 @@
 
 package com.indago.tr2d.plugins.seg;
 
+import com.indago.io.ProjectFolder;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.cell.CellGrid;
 import net.imglib2.labkit.color.ColorMap;
@@ -20,6 +21,7 @@ import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.integer.IntType;
 import org.scijava.Context;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -142,4 +144,48 @@ public class SegmentationModel implements
 	public Context getContext() {
 		return context;
 	}
+
+	// -- Serialization --
+
+	public static SegmentationModel open(
+			RandomAccessibleInterval< ? extends NumericType< ? > > image,
+			Context context, ProjectFolder projectFolder) throws IOException
+	{
+		SegmentationModel result = new SegmentationModel(image, context);
+		result.openSegmentationItems(context, projectFolder);
+		return result;
+	}
+
+	private void openSegmentationItems(Context context,
+			ProjectFolder projectFolder)
+			throws IOException
+	{
+		List<MySegmentationItem > result = new ArrayList<>();
+		for(int i = 0;;i++) {
+			ProjectFolder subFolder = projectFolder.addFolder(Integer.toString(i+1));
+			if(!subFolder.exists())
+				break;
+			result.add(MySegmentationItem
+					.open(this, initClassifier(), context, subFolder));
+		}
+		replaceSegmentationItems(result);
+	}
+
+	private void replaceSegmentationItems(List< MySegmentationItem > result) {
+		segmenters.clear();
+		segmenters.addAll(result);
+		if(segmenters.isEmpty())
+			addSegmenter();
+		selectedSegmenter().set(result.get(0));
+	}
+
+	public void save(ProjectFolder folder) throws IOException {
+		folder.deleteContent();
+		for(int i = 0; i < segmenters.size(); i++) {
+			MySegmentationItem item = segmenters.get(i);
+			ProjectFolder subFolder = folder.addFolder(Integer.toString(i + 1));
+			item.save(context, subFolder);
+		}
+	}
+
 }

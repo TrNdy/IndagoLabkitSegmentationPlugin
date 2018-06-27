@@ -10,7 +10,6 @@ import net.imglib2.converter.Converters;
 import net.imglib2.labkit.bdv.BdvLayer;
 import net.imglib2.labkit.bdv.BdvShowable;
 import net.imglib2.labkit.models.Holder;
-import net.imglib2.labkit.models.SegmentationItem;
 import net.imglib2.labkit.models.SegmentationResultsModel;
 import net.imglib2.labkit.segmentation.Segmenter;
 import net.imglib2.labkit.utils.Notifier;
@@ -49,6 +48,7 @@ public class PredictionLayer implements BdvLayer {
 			getEmptyPrediction(selected));
 		this.transformation = selected.transformation();
 		this.view = Views.interval(segmentationContainer, selected.interval());
+		classifierChanged();
 		model.notifier().add(ignore -> classifierChanged());
 		registerListener(model.get());
 	}
