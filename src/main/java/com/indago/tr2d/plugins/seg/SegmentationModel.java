@@ -184,7 +184,8 @@ public class SegmentationModel implements
 		segmenters.addAll(result);
 		if(segmenters.isEmpty())
 			addSegmenter();
-		selectedSegmenter().set(result.get(0));
+		else
+			selectedSegmenter().set(result.get(0));
 	}
 
 	public void save(ProjectFolder folder) throws IOException {
