@@ -20,7 +20,7 @@ import java.util.List;
  * @author Matthias Arzt
  */
 @Plugin(type = Tr2dSegmentationPlugin.class, name = "Tr2d Labkit Segmentation")
-public class LabkitPlugin implements Tr2dSegmentationPlugin {
+public class LabkitPlugin implements Tr2dSegmentationPlugin, AutoCloseable {
 
 	@Parameter
 	private Context context;
@@ -57,5 +57,10 @@ public class LabkitPlugin implements Tr2dSegmentationPlugin {
 	@Override
 	public boolean isUsable() {
 		return panel.isUsable();
+	}
+
+	@Override
+	public void close() {
+		panel.close();
 	}
 }

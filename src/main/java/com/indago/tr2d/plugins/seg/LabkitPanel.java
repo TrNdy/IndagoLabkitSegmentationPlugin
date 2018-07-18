@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public class LabkitPanel {
+public class LabkitPanel implements AutoCloseable {
 
 	private final Logger log;
 	private SegmentationModel segmentationModel;
@@ -60,13 +60,24 @@ public class LabkitPanel {
 	}
 
 	public List<RandomAccessibleInterval<IntType>> getOutputs() {
-		try {
-			segmentationModel.save(folder);
-		}
-		catch (IOException e) {
-			log.warn("Tr2dLabkitSegmentationPlugin: Failed to current settings. ", e);
-		}
+		saveSettings();
 		return isUsable() ? segmentation.getSegmentations()
 				: Collections.emptyList();
 	}
+
+	@Override
+	public void close() {
+		saveSettings();
+	}
+
+	private void saveSettings() {
+		if(isUsable())
+			try {
+				segmentationModel.save(folder);
+			}
+			catch (IOException e) {
+				log.warn("Tr2dLabkitSegmentationPlugin: Failed to save current settings. ", e);
+			}
+	}
+
 }
