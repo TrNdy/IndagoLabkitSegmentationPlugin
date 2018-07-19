@@ -2,6 +2,7 @@
 package com.indago.tr2d.plugins.seg;
 
 import com.indago.io.ProjectFolder;
+import com.indago.tr2d.io.projectfolder.Tr2dProjectFolder;
 import com.indago.tr2d.ui.model.Tr2dModel;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.integer.IntType;
@@ -31,7 +32,9 @@ public class LabkitPanel implements AutoCloseable {
 	{
 		try {
 			try {
-				folder = model.getProjectFolder().addFolder("labkit_segmentation");
+				folder = model.getProjectFolder()
+						.getFolder(Tr2dProjectFolder.SEGMENTATION_FOLDER)
+						.addFolder("labkit");
 				if(folder.exists())
 					segmentationModel =
 							SegmentationModel.open(model.getRawData(),
@@ -73,7 +76,8 @@ public class LabkitPanel implements AutoCloseable {
 	private void saveSettings() {
 		if(isUsable())
 			try {
-				segmentationModel.save(folder);
+				if(folder != null)
+					segmentationModel.save(folder);
 			}
 			catch (IOException e) {
 				log.warn("Tr2dLabkitSegmentationPlugin: Failed to save current settings. ", e);
