@@ -115,6 +115,14 @@ public class SegmentationModel implements
 		return segmentationItem;
 	}
 
+	@Override
+	public void removeSelectedSegmenter() {
+		if(segmenters.size() <= 1)
+			return;
+		segmenters.remove(selectedSegmenter.get());
+		selectedSegmenter.set(segmenters.get(0));
+	}
+
 	private Segmenter initClassifier() {
 		TrainableSegmentationSegmenter classifier1 =
 			new TrainableSegmentationSegmenter(context, inputImage);
@@ -184,8 +192,7 @@ public class SegmentationModel implements
 		segmenters.addAll(result);
 		if(segmenters.isEmpty())
 			addSegmenter();
-		else
-			selectedSegmenter().set(result.get(0));
+		selectedSegmenter().set(segmenters.get(0));
 	}
 
 	public void save(ProjectFolder folder) throws IOException {
