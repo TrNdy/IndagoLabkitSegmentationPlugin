@@ -32,7 +32,7 @@ import java.util.stream.Stream;
  * Serves as a model for PredictionLayer and TrainClassifierAction
  */
 public class SegmentationModel implements
-	net.imglib2.labkit.models.SegmentationModel, SegmenterListModel
+	net.imglib2.labkit.models.SegmentationModel, SegmenterListModel<MySegmentationItem>
 {
 
 	private final ImageLabelingModel imageLabelingModel;
@@ -56,7 +56,7 @@ public class SegmentationModel implements
 		this.selectedSegmenter = new DefaultHolder<>(segmentationItem);
 		this.selectedSegmenter.notifier().add(this::selectedSegmenterChanged);
 		this.imageLabelingModel = new ImageLabelingModel(inputImage.showable(),
-			segmentationItem.labeling(), true);
+			segmentationItem.labeling(), true, inputImage.getDefaultLabelingFilename());
 	}
 
 	private static DefaultInputImage initInputImage(
@@ -116,11 +116,17 @@ public class SegmentationModel implements
 	}
 
 	@Override
-	public void removeSelectedSegmenter() {
+	public void train(MySegmentationItem item) {
+		item.train();
+	}
+
+	@Override
+	public void remove(MySegmentationItem item) {
 		if(segmenters.size() <= 1)
 			return;
-		segmenters.remove(selectedSegmenter.get());
-		selectedSegmenter.set(segmenters.get(0));
+		segmenters.remove(item);
+		if(!segmenters.contains(selectedSegmenter.get()))
+			selectedSegmenter.set(segmenters.get(0));
 	}
 
 	private Segmenter initClassifier() {

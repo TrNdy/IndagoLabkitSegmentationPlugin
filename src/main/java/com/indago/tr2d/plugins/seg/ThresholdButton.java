@@ -76,7 +76,7 @@ public class ThresholdButton {
 			ArrayImgs.unsignedBytes(100, 100, 100),
 			new Context());
 		JFrame frame = new JFrame();
-		frame.add(new SegmenterPanel(segmentationModel, new ActionMap())
+		frame.add(new SegmenterPanel(segmentationModel)
 			.getComponent());
 		frame.add(new ThresholdButton(segmentationModel).getComponent(),
 			BorderLayout.PAGE_END);
