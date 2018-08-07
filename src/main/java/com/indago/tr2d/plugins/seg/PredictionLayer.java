@@ -36,6 +36,7 @@ public class PredictionLayer implements BdvLayer {
 	private final SharedQueue queue = new SharedQueue(Runtime.getRuntime()
 		.availableProcessors());
 	private Notifier<Runnable> listeners = new Notifier<>();
+	private Notifier<Runnable> makeVisible = new Notifier<>();
 	private RandomAccessibleInterval<? extends NumericType<?>> view;
 	private AffineTransform3D transformation;
 	private Set<MySegmentationItem> alreadyRegistered = Collections.newSetFromMap(
@@ -62,7 +63,10 @@ public class PredictionLayer implements BdvLayer {
 	}
 
 	private void onTrainingFinished(Segmenter segmenter) {
-		if (model.get().segmenter() == segmenter) classifierChanged();
+		if (model.get().segmenter() == segmenter) {
+			makeVisible.forEach(Runnable::run);
+			classifierChanged();
+		}
 	}
 
 	private RandomAccessible<VolatileARGBType> getEmptyPrediction(
@@ -140,5 +144,10 @@ public class PredictionLayer implements BdvLayer {
 	@Override
 	public String title() {
 		return "Segmentation";
+	}
+
+	@Override
+	public Notifier< Runnable > makeVisible() {
+		return makeVisible;
 	}
 }
