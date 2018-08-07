@@ -11,6 +11,8 @@ import org.scijava.ui.behaviour.util.RunnableAction;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -28,6 +30,19 @@ public class LabkitPluginDemo {
 		frame.add(plugin.getInteractionPanel());
 		frame.add(initBottomPanel(), BorderLayout.PAGE_END);
 		frame.setVisible(true);
+		frame.addWindowListener(new WindowAdapter() {
+
+			@Override public void windowClosing(WindowEvent windowEvent) {
+				try {
+					if(plugin instanceof AutoCloseable)
+						((AutoCloseable) plugin).close();
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+				super.windowClosed(windowEvent);
+			}
+		});
 	}
 
 	private static Tr2dSegmentationPlugin initPlugin() throws IOException {
@@ -48,7 +63,8 @@ public class LabkitPluginDemo {
 
 	private static Tr2dModel getTr2dModel() throws IOException {
 		String path = "/home/arzt/Documents/Notes/Tr2d/Project";
-		ProjectFolder projectFolder = new Tr2dProjectFolder(new File(path));
+		Tr2dProjectFolder projectFolder = new Tr2dProjectFolder(new File(path));
+		projectFolder.initialize();
 		ImagePlus imagePlus = new ImagePlus(path + "/raw.tif");
 		return new Tr2dModel(projectFolder, imagePlus);
 	}
