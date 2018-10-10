@@ -18,7 +18,7 @@
 
 	<groupId>com.indago.tr2d</groupId>
 	<artifactId>Tr2dLabkitSegmentationPlugin</artifactId>
-	<version>0.1.6-SNAPSHOT</version>
+	<version>0.1.7-SNAPSHOT</version>
 
 	<name>Tr2dLabkitSegmentationPlugin</name>
 	<description>Segmentation plugin for tr2d based on Fiji's Trainable Weka Segmentation</description>
