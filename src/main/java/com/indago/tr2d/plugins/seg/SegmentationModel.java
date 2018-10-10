@@ -4,7 +4,6 @@ package com.indago.tr2d.plugins.seg;
 import com.indago.io.ProjectFolder;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.cell.CellGrid;
-import net.imglib2.labkit.color.ColorMap;
 import net.imglib2.labkit.inputimage.DefaultInputImage;
 import net.imglib2.labkit.inputimage.InputImage;
 import net.imglib2.labkit.labeling.Labeling;
@@ -41,6 +40,7 @@ public class SegmentationModel implements
 	private List<MySegmentationItem> segmenters = new ArrayList<>();
 	private final RandomAccessibleInterval<? extends NumericType<?>> compatibleImage;
 	private final CellGrid grid;
+	private final Holder<Boolean> segmentationVisibility = new DefaultHolder<>(true);
 
 	private Context context;
 
@@ -95,11 +95,6 @@ public class SegmentationModel implements
 	@Override
 	public Holder<MySegmentationItem> selectedSegmenter() {
 		return selectedSegmenter;
-	}
-
-	@Override
-	public ColorMap colorMap() {
-		return imageLabelingModel.colorMapProvider().colorMap();
 	}
 
 	@Override
@@ -210,4 +205,7 @@ public class SegmentationModel implements
 		}
 	}
 
+	public Holder<Boolean> segmentationVisibility() {
+		return segmentationVisibility;
+	}
 }

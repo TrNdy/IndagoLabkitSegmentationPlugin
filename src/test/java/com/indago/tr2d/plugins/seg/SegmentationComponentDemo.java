@@ -18,6 +18,7 @@ import java.awt.*;
 public class SegmentationComponentDemo {
 
 	private final SegmentationComponent segmenter;
+	private final SegmentationModel model;
 
 	public static void main(String... args) {
 		new SegmentationComponentDemo();
@@ -28,8 +29,7 @@ public class SegmentationComponentDemo {
 		Img<? extends NumericType<?>> image = ImageJFunctions.wrap(new ImagePlus(
 			"/home/arzt/Documents/Notes/Tr2d/ProjectFiles/raw.tif"));
 		Context context = new Context();
-		SegmentationModel model =
-				new SegmentationModel(image, context);
+		model = new SegmentationModel(image, context);
 		segmenter = new SegmentationComponent(model);
 		frame.add(segmenter.getComponent());
 		frame.add(getBottomPanel(), BorderLayout.PAGE_END);
@@ -46,7 +46,7 @@ public class SegmentationComponentDemo {
 	}
 
 	private void showSegmentation() {
-		for (RandomAccessibleInterval<IntType> segmentation : segmenter
+		for (RandomAccessibleInterval<IntType> segmentation : model
 			.getSegmentations())
 		{
 			Views.iterable(segmentation).forEach(x -> x.mul(50));

@@ -57,8 +57,7 @@ public class MySegmentationItem extends SegmentationItem {
 	}
 
 	private static Labeling defaultLabeling(SegmentationModel model) {
-		return new Labeling(Arrays.asList("background", "foreground"), model
-				.image());
+		return Labeling.createEmpty(Arrays.asList("background", "foreground"), model.image());
 	}
 
 	private void resetProbability() {

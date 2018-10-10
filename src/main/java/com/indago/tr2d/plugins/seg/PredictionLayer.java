@@ -35,6 +35,7 @@ public class PredictionLayer implements BdvLayer {
 	private final RandomAccessibleContainer<VolatileARGBType> segmentationContainer;
 	private final SharedQueue queue = new SharedQueue(Runtime.getRuntime()
 		.availableProcessors());
+	private final Holder< Boolean > visibility;
 	private Notifier<Runnable> listeners = new Notifier<>();
 	private Notifier<Runnable> makeVisible = new Notifier<>();
 	private RandomAccessibleInterval<? extends NumericType<?>> view;
@@ -42,13 +43,15 @@ public class PredictionLayer implements BdvLayer {
 	private Set<MySegmentationItem> alreadyRegistered = Collections.newSetFromMap(
 		new WeakHashMap<>());
 
-	public PredictionLayer(Holder<? extends MySegmentationItem> model) {
+	public PredictionLayer(Holder< ? extends MySegmentationItem > model,
+			Holder< Boolean > visibility) {
 		this.model = model;
 		SegmentationResultsModel selected = model.get().results();
 		this.segmentationContainer = new RandomAccessibleContainer<>(
 			getEmptyPrediction(selected));
 		this.transformation = selected.transformation();
 		this.view = Views.interval(segmentationContainer, selected.interval());
+		this.visibility = visibility;
 		classifierChanged();
 		model.notifier().add(ignore -> classifierChanged());
 		registerListener(model.get());
@@ -147,7 +150,7 @@ public class PredictionLayer implements BdvLayer {
 	}
 
 	@Override
-	public Notifier< Runnable > makeVisible() {
-		return makeVisible;
+	public Holder< Boolean > visibility() {
+		return visibility;
 	}
 }

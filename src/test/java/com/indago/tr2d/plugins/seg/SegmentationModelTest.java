@@ -8,6 +8,8 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.basictypeaccess.array.ByteArray;
+import net.imglib2.labkit.labeling.Label;
+import net.imglib2.labkit.labeling.Labeling;
 import net.imglib2.type.numeric.integer.ByteType;
 import net.imglib2.type.numeric.integer.IntType;
 import org.junit.Test;
@@ -18,6 +20,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
@@ -35,13 +39,18 @@ public class SegmentationModelTest {
 		// setup
 		SegmentationModel model = new SegmentationModel(image, context);
 		ProjectFolder projectFolder = tmpProjectFolder();
-		getPixel(model.labeling(), 0,0,0).add("foreground");
+		addPixel(model.labeling(), "foreground", 0, 0, 0);
 		// process
 		model.save(projectFolder);
 		SegmentationModel model2 = SegmentationModel
 				.open(image, context, projectFolder);
 		// test
-		assertEquals(Collections.singleton("foreground"), getPixel(model2.labeling(), 0, 0, 0));
+		assertEquals(Collections.singleton("foreground"), getPixelNames(model2.labeling(), 0, 0, 0));
+	}
+
+	private Set<String> getPixelNames(Labeling labeling, long... position) {
+		return getPixel(labeling, position).stream().map(Label::name).collect(
+				Collectors.toSet());
 	}
 
 	@Test
@@ -64,14 +73,14 @@ public class SegmentationModelTest {
 		assertSame(model.labeling(), model.segmenters().get(0).labeling());
 		ProjectFolder projectFolder = tmpProjectFolder();
 		model.addSegmenter();
-		getPixel(model.segmenters().get(0).labeling(), 0,0,0).add("foreground");
+		addPixel(model.segmenters().get(0).labeling(), "foreground", 0, 0, 0);
 		// process
 		model.save(projectFolder);
 		SegmentationModel model2 = SegmentationModel
 				.open(image, context, projectFolder);
 		// test
 		assertSame(model2.labeling(), model2.segmenters().get(0).labeling());
-		assertEquals(Collections.singleton("foreground"), getPixel(model2.segmenters().get(0).labeling(), 0, 0, 0));
+		assertEquals(Collections.singleton("foreground"), getPixelNames(model2.segmenters().get(0).labeling(), 0, 0, 0));
 	}
 
 	@Test
@@ -81,15 +90,20 @@ public class SegmentationModelTest {
 		ProjectFolder projectFolder = tmpProjectFolder();
 		model.addSegmenter();
 		List< MySegmentationItem > segmenters = model.segmenters();
-		getPixel(segmenters.get(0).labeling(), 0, 0, 0).add("foreground");
-		getPixel(segmenters.get(1).labeling(), 0, 0, 0).add("background");
+		addPixel(segmenters.get(0).labeling(), "foreground", 0, 0, 0);
+		addPixel(segmenters.get(1).labeling(), "background", 0, 0, 0);
 		// process
 		model.save(projectFolder);
 		SegmentationModel model2 = SegmentationModel
 				.open(image, context, projectFolder);
 		// test
-		assertEquals(Collections.singleton("foreground"), getPixel(model2.segmenters().get(0).labeling(), 0, 0, 0));
-		assertEquals(Collections.singleton("background"), getPixel(model2.segmenters().get(1).labeling(), 0, 0, 0));
+		assertEquals(Collections.singleton("foreground"), getPixelNames(model2.segmenters().get(0).labeling(), 0, 0, 0));
+		assertEquals(Collections.singleton("background"), getPixelNames(model2.segmenters().get(1).labeling(), 0, 0, 0));
+	}
+
+	private void addPixel(Labeling labeling, String foreground, long... position)
+	{
+		getPixel(labeling, position).add(labeling.getLabel(foreground));
 	}
 
 	@Test
@@ -139,8 +153,9 @@ public class SegmentationModelTest {
 	}
 
 	private void train(MySegmentationItem item) {
-		getPixel(item.labeling(),0,0,0).add("foreground");
-		getPixel(item.labeling(),1,1,1).add("background");
+		final Labeling labeling = item.labeling();
+		addPixel(labeling, "foreground", 0, 0, 0);
+		addPixel(labeling, "background", 1, 1, 1);
 		item.train();
 	}
 

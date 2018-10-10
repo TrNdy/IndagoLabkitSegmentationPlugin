@@ -65,7 +65,7 @@ public class LabkitPanel implements AutoCloseable {
 	public List<RandomAccessibleInterval<IntType>> getOutputs() {
 		if(!isUsable()) return Collections.emptyList();
 		List< RandomAccessibleInterval< IntType > > segmentations =
-				segmentation.getSegmentations();
+				segmentationModel.getSegmentations();
 		saveSettings();
 		return segmentations;
 	}
