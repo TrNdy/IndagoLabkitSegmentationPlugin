@@ -44,6 +44,7 @@
 		<dependency>
 			<groupId>net.imglib2</groupId>
 			<artifactId>imglib2-labkit</artifactId>
+			<version>0.1.15-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.miglayout</groupId>

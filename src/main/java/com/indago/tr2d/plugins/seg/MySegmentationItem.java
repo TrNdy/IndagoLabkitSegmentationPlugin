@@ -19,6 +19,7 @@ import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.ConstantUtils;
+import net.imglib2.util.ValuePair;
 import net.imglib2.view.Views;
 import org.scijava.Context;
 
@@ -48,7 +49,7 @@ public class MySegmentationItem extends SegmentationItem {
 		this.model = model;
 		this.labeling = labeling;
 		this.probability = probability;
-		segmenter.listeners().add(ignore -> resetProbability());
+		segmenter.trainingCompletedListeners().add(this::resetProbability);
 		thresholds.notifier().add(ignore -> resetSegmentation());
 	}
 
@@ -122,8 +123,7 @@ public class MySegmentationItem extends SegmentationItem {
 	}
 
 	public void train() {
-		segmenter().train(Collections.singletonList(model.image()), Collections
-			.singletonList(labeling));
+		segmenter().train(Collections.singletonList(new ValuePair<>(model.image(), labeling)));
 	}
 
 	public Holder<List<Double>> thresholds() {
@@ -197,7 +197,7 @@ public class MySegmentationItem extends SegmentationItem {
 		Segmenter segmenter = segmenter();
 		if(segmenter.isTrained())
 			try {
-				segmenter.saveModel(classifierFilename, false);
+				segmenter.saveModel(classifierFilename);
 			}
 			catch (Exception e) {
 				throw new IOException(e);

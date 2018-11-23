@@ -60,9 +60,11 @@ public class PredictionLayer implements BdvLayer {
 	private void registerListener(MySegmentationItem segmenter) {
 		if (alreadyRegistered.contains(segmenter)) return;
 		alreadyRegistered.add(segmenter);
-		segmenter.segmenter().listeners().add(this::onTrainingFinished);
-		segmenter.thresholds().notifier().add(ignore -> onTrainingFinished(segmenter
-			.segmenter()));
+		final Segmenter segmenter1 = segmenter.segmenter();
+		segmenter1.trainingCompletedListeners().add(() -> onTrainingFinished(
+				segmenter1));
+		segmenter.thresholds().notifier().add(ignore -> onTrainingFinished(
+				segmenter1));
 	}
 
 	private void onTrainingFinished(Segmenter segmenter) {
