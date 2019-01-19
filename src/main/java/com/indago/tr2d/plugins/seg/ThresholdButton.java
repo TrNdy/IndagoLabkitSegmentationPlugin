@@ -3,6 +3,7 @@ package com.indago.tr2d.plugins.seg;
 
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.labkit.inputimage.DefaultInputImage;
+import net.imglib2.labkit.models.Holder;
 import net.imglib2.labkit.panel.SegmenterPanel;
 import org.scijava.Context;
 
@@ -23,7 +24,7 @@ public class ThresholdButton {
 	public ThresholdButton(SegmentationModel segmentationModel) {
 		this.segmentationModel = segmentationModel;
 		segmentationModel.selectedSegmenter().notifier().add(
-			ignore -> updateThresholds());
+				this::updateThresholds);
 		button = new JButton("Thresholds ...");
 		button.addActionListener(a -> {
 			String text = JOptionPane.showInputDialog(null, "Enter thresholds",
@@ -83,7 +84,9 @@ public class ThresholdButton {
 		frame.setSize(500, 500);
 		frame.setVisible(true);
 		segmentationModel.selectedSegmenter().notifier().add(System.out::println);
-		segmentationModel.selectedSegmenter().get().thresholds().notifier().add(
-			x -> System.out.println(Arrays.toString(x.toArray())));
+		final Holder< List< Double > > thresholds =
+				segmentationModel.selectedSegmenter().get().thresholds();
+		thresholds.notifier().add(
+				() -> System.out.println(Arrays.toString(thresholds.get().toArray())));
 	}
 }

@@ -36,8 +36,8 @@ public class PredictionLayer implements BdvLayer {
 	private final SharedQueue queue = new SharedQueue(Runtime.getRuntime()
 		.availableProcessors());
 	private final Holder< Boolean > visibility;
-	private Notifier<Runnable> listeners = new Notifier<>();
-	private Notifier<Runnable> makeVisible = new Notifier<>();
+	private Notifier listeners = new Notifier();
+	private Notifier makeVisible = new Notifier();
 	private RandomAccessibleInterval<? extends NumericType<?>> view;
 	private AffineTransform3D transformation;
 	private Set<MySegmentationItem> alreadyRegistered = Collections.newSetFromMap(
@@ -53,7 +53,7 @@ public class PredictionLayer implements BdvLayer {
 		this.view = Views.interval(segmentationContainer, selected.interval());
 		this.visibility = visibility;
 		classifierChanged();
-		model.notifier().add(ignore -> classifierChanged());
+		model.notifier().add(this::classifierChanged);
 		registerListener(model.get());
 	}
 
@@ -61,15 +61,15 @@ public class PredictionLayer implements BdvLayer {
 		if (alreadyRegistered.contains(segmenter)) return;
 		alreadyRegistered.add(segmenter);
 		final Segmenter segmenter1 = segmenter.segmenter();
-		segmenter1.trainingCompletedListeners().add(() -> onTrainingFinished(
+		segmenter.results().segmentationChangedListeners().add(() -> onTrainingFinished(
 				segmenter1));
-		segmenter.thresholds().notifier().add(ignore -> onTrainingFinished(
+		segmenter.thresholds().notifier().add(() -> onTrainingFinished(
 				segmenter1));
 	}
 
 	private void onTrainingFinished(Segmenter segmenter) {
 		if (model.get().segmenter() == segmenter) {
-			makeVisible.forEach(Runnable::run);
+			makeVisible.notifyListeners();
 			classifierChanged();
 		}
 	}
@@ -89,7 +89,7 @@ public class PredictionLayer implements BdvLayer {
 			.extendValue(coloredVolatileView(segmentationItem), new VolatileARGBType(
 				0)) : getEmptyPrediction(selected);
 		segmentationContainer.setSource(source);
-		listeners.forEach(Runnable::run);
+		listeners.notifyListeners();
 	}
 
 	private RandomAccessibleInterval<VolatileARGBType> coloredVolatileView(
@@ -142,7 +142,7 @@ public class PredictionLayer implements BdvLayer {
 	}
 
 	@Override
-	public Notifier<Runnable> listeners() {
+	public Notifier listeners() {
 		return listeners;
 	}
 

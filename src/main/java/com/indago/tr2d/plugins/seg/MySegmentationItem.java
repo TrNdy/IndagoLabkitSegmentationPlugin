@@ -49,8 +49,7 @@ public class MySegmentationItem extends SegmentationItem {
 		this.model = model;
 		this.labeling = labeling;
 		this.probability = probability;
-		segmenter.trainingCompletedListeners().add(this::resetProbability);
-		thresholds.notifier().add(ignore -> resetSegmentation());
+		thresholds.notifier().add(this::resetSegmentation);
 	}
 
 	public MySegmentationItem(SegmentationModel model, Segmenter segmenter) {
@@ -123,7 +122,7 @@ public class MySegmentationItem extends SegmentationItem {
 	}
 
 	public void train() {
-		segmenter().train(Collections.singletonList(new ValuePair<>(model.image(), labeling)));
+		super.train(Collections.singletonList(new ValuePair<>(model.image(), labeling)));
 	}
 
 	public Holder<List<Double>> thresholds() {

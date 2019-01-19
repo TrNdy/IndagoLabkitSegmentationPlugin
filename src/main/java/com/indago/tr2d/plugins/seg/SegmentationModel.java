@@ -15,6 +15,7 @@ import net.imglib2.labkit.segmentation.Segmenter;
 import net.imglib2.labkit.segmentation.weka.TimeSeriesSegmenter;
 import net.imglib2.labkit.segmentation.weka.TrainableSegmentationSegmenter;
 import net.imglib2.labkit.utils.LabkitUtils;
+import net.imglib2.labkit.utils.Notifier;
 import net.imglib2.realtransform.AffineTransform3D;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.integer.IntType;
@@ -41,8 +42,9 @@ public class SegmentationModel implements
 	private final RandomAccessibleInterval<? extends NumericType<?>> compatibleImage;
 	private final CellGrid grid;
 	private final Holder<Boolean> segmentationVisibility = new DefaultHolder<>(true);
+	private final Notifier listeners = new Notifier();
 
-	private Context context;
+	private final Context context;
 
 	public SegmentationModel(
 			RandomAccessibleInterval< ? extends NumericType< ? > > image,
@@ -68,8 +70,8 @@ public class SegmentationModel implements
 		return defaultInputImage;
 	}
 
-	private void selectedSegmenterChanged(MySegmentationItem segmentationItem) {
-		imageLabelingModel.labeling().set(segmentationItem.labeling());
+	private void selectedSegmenterChanged() {
+		imageLabelingModel.labeling().set(selectedSegmenter.get().labeling());
 	}
 
 	@Override
@@ -107,6 +109,7 @@ public class SegmentationModel implements
 		MySegmentationItem segmentationItem = new MySegmentationItem(this,
 			initClassifier());
 		this.segmenters.add(segmentationItem);
+		listeners.notifyListeners();
 		return segmentationItem;
 	}
 
@@ -122,6 +125,7 @@ public class SegmentationModel implements
 		segmenters.remove(item);
 		if(!segmenters.contains(selectedSegmenter.get()))
 			selectedSegmenter.set(segmenters.get(0));
+		listeners.notifyListeners();
 	}
 
 	private Segmenter initClassifier() {
@@ -194,6 +198,7 @@ public class SegmentationModel implements
 		if(segmenters.isEmpty())
 			addSegmenter();
 		selectedSegmenter().set(segmenters.get(0));
+		listeners.notifyListeners();
 	}
 
 	public void save(ProjectFolder folder) throws IOException {
@@ -207,5 +212,10 @@ public class SegmentationModel implements
 
 	public Holder<Boolean> segmentationVisibility() {
 		return segmentationVisibility;
+	}
+
+	@Override
+	public Notifier listChangeListeners() {
+		return listeners;
 	}
 }
