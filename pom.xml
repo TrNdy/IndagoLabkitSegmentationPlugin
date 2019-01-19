@@ -42,6 +42,10 @@
 			<artifactId>tr2d</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.indago</groupId>
+			<artifactId>Indago</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>net.imglib2</groupId>
 			<artifactId>imglib2-labkit</artifactId>
 			<version>0.1.15-SNAPSHOT</version>
