@@ -1,19 +1,20 @@
 
 package com.indago.tr2d.plugins.seg;
 
-import com.indago.io.ProjectFolder;
-import com.indago.tr2d.io.projectfolder.Tr2dProjectFolder;
-import com.indago.tr2d.ui.model.Tr2dModel;
-import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.type.numeric.integer.IntType;
-import org.scijava.Context;
-import org.scijava.log.Logger;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+
+import javax.swing.JPanel;
+
+import org.scijava.Context;
+import org.scijava.log.Logger;
+
+import com.indago.io.ProjectFolder;
+
+import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.type.numeric.integer.IntType;
 
 public class LabkitPanel implements AutoCloseable {
 
@@ -22,37 +23,36 @@ public class LabkitPanel implements AutoCloseable {
 	private ProjectFolder folder;
 	private final SegmentationComponent segmentation;
 
-	public LabkitPanel(Context context, Tr2dModel model, Logger log) {
+	public LabkitPanel( final Context context, final IndagoLabkitPlugin ilp, final Logger log ) {
 		this.log = log;
-		segmentation = createSegmentationComponent(context, model);
+		segmentation = createSegmentationComponent( context, ilp );
 	}
 
-	private SegmentationComponent createSegmentationComponent(Context context,
-		Tr2dModel model)
+	private SegmentationComponent createSegmentationComponent(final Context context,
+			final IndagoLabkitPlugin ilp )
 	{
 		try {
 			try {
-				folder = model.getProjectFolder()
-						.getFolder(Tr2dProjectFolder.SEGMENTATION_FOLDER)
-						.addFolder("labkit");
+				folder = ilp.getProjectFolder().addFolder( "labkit" );
 				if(folder.exists())
 					segmentationModel =
-							SegmentationModel.open(model.getRawData(),
+							SegmentationModel.open(
+									ilp.getRawData(),
 									context, folder);
-			} catch(IOException e) {
+			} catch(final IOException e) {
 				log.warn("Tr2dLabkitSegmentationPlugin: Failed to load previous settings.", e);
 			}
 			if(segmentationModel == null)
-				segmentationModel = new SegmentationModel(model.getRawData(), context);
+				segmentationModel = new SegmentationModel( ilp.getRawData(), context );
 			return new SegmentationComponent(segmentationModel);
 		}
-		catch (NoClassDefFoundError e) {
+		catch (final NoClassDefFoundError e) {
 			return null;
 		}
 	}
 
 	public JPanel getPanel() {
-		JPanel panel = new JPanel();
+		final JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
 		if (isUsable()) panel.add(segmentation.getComponent());
 		return panel;
@@ -64,7 +64,7 @@ public class LabkitPanel implements AutoCloseable {
 
 	public List<RandomAccessibleInterval<IntType>> getOutputs() {
 		if(!isUsable()) return Collections.emptyList();
-		List< RandomAccessibleInterval< IntType > > segmentations =
+		final List< RandomAccessibleInterval< IntType > > segmentations =
 				segmentationModel.getSegmentations();
 		saveSettings();
 		return segmentations;
@@ -81,7 +81,7 @@ public class LabkitPanel implements AutoCloseable {
 				if(folder != null)
 					segmentationModel.save(folder);
 			}
-			catch (IOException e) {
+			catch (final IOException e) {
 				log.warn("Tr2dLabkitSegmentationPlugin: Failed to save current settings. ", e);
 			}
 	}
