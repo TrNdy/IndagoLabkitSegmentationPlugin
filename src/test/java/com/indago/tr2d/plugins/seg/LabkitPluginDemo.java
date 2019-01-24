@@ -15,7 +15,8 @@ import org.scijava.Context;
 import org.scijava.ui.behaviour.util.RunnableAction;
 
 import com.indago.io.DoubleTypeImgLoader;
-import com.indago.tr2d.io.projectfolder.Tr2dProjectFolder;
+import com.indago.io.ProjectFolder;
+import com.indago.plugins.seg.IndagoSegmentationPlugin;
 
 import ij.ImagePlus;
 import net.imglib2.img.display.imagej.ImageJFunctions;
@@ -54,7 +55,7 @@ public class LabkitPluginDemo {
 		new Context().inject(plugin);
 
 		final String path = "/home/arzt/Documents/Notes/Tr2d/Project";
-		final Tr2dProjectFolder projectFolder = new Tr2dProjectFolder( new File( path + "/segmentation" ) );
+		final ProjectFolder projectFolder = new ProjectFolder( "TEST", new File( path + "/segmentation" ) );
 		final ImagePlus imagePlus = new ImagePlus( path + "/raw.tif" );
 
 		plugin.setProjectFolderAndData( projectFolder, DoubleTypeImgLoader.wrapEnsureType( imagePlus ) );

@@ -16,13 +16,13 @@
 		<releaseProfiles>deploy-to-imagej</releaseProfiles>
 	</properties>
 
-	<groupId>com.indago.tr2d</groupId>
-	<artifactId>Tr2dLabkitSegmentationPlugin</artifactId>
+	<groupId>com.indago</groupId>
+	<artifactId>IndagoLabkitSegmentationPlugin</artifactId>
 	<version>0.1.8-SNAPSHOT</version>
 
-	<name>Tr2dLabkitSegmentationPlugin</name>
-	<description>Segmentation plugin for tr2d based on Fiji's Trainable Weka Segmentation</description>
-	<url>https:github.com/TrNdy/Tr2dLabkitSegmentationPlugin</url>
+	<name>IndagoLabkitSegmentationPlugin</name>
+	<description>Segmentation plugin for Indago projects, based on the one and only Labkit</description>
+	<url>https:github.com/TrNdy/IndagoLabkitSegmentationPlugin</url>
 	<inceptionYear>2016</inceptionYear>
 	<organization>
 		<name>TrNdy</name>
@@ -38,11 +38,6 @@
 
 	<dependencies>
 		<!-- Tr2d dependencies -->
-	 	<dependency>
-			<groupId>com.indago</groupId>
-			<artifactId>tr2d</artifactId>
-			<version>0.1.8-SNAPSHOT</version>
-		</dependency>
 		<dependency>
 			<groupId>com.indago</groupId>
 			<artifactId>Indago</artifactId>

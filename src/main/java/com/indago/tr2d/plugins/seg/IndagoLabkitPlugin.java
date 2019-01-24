@@ -15,6 +15,7 @@ import org.scijava.plugin.Plugin;
 
 import com.indago.IndagoLog;
 import com.indago.io.ProjectFolder;
+import com.indago.plugins.seg.IndagoSegmentationPlugin;
 
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.integer.IntType;
