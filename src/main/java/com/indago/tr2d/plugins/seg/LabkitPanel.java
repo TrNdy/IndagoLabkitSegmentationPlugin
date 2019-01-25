@@ -8,6 +8,8 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import net.imagej.ImgPlus;
+import net.imglib2.type.numeric.real.DoubleType;
 import org.scijava.Context;
 import org.scijava.log.Logger;
 
@@ -23,27 +25,28 @@ public class LabkitPanel implements AutoCloseable {
 	private ProjectFolder folder;
 	private final SegmentationComponent segmentation;
 
-	public LabkitPanel( final Context context, final IndagoLabkitPlugin ilp, final Logger log ) {
+	public LabkitPanel(final Context context, final Logger log,
+			ProjectFolder projectFolder, ImgPlus< DoubleType > rawData) {
 		this.log = log;
-		segmentation = createSegmentationComponent( context, ilp );
+		segmentation = createSegmentationComponent( context, projectFolder, rawData );
 	}
 
 	private SegmentationComponent createSegmentationComponent(final Context context,
-			final IndagoLabkitPlugin ilp )
+			ProjectFolder projectFolder, final ImgPlus< DoubleType > rawData)
 	{
 		try {
 			try {
-				folder = ilp.getProjectFolder().addFolder( "labkit" );
+				folder = projectFolder.addFolder( "labkit" );
 				if(folder.exists())
 					segmentationModel =
 							SegmentationModel.open(
-									ilp.getRawData(),
+									rawData,
 									context, folder);
 			} catch(final IOException e) {
 				log.warn("Tr2dLabkitSegmentationPlugin: Failed to load previous settings.", e);
 			}
 			if(segmentationModel == null)
-				segmentationModel = new SegmentationModel( ilp.getRawData(), context );
+				segmentationModel = new SegmentationModel( rawData, context );
 			return new SegmentationComponent(segmentationModel);
 		}
 		catch (final NoClassDefFoundError e) {

@@ -2,9 +2,11 @@ package com.indago.tr2d.plugins.seg;
 
 import com.indago.io.ProjectFile;
 import com.indago.io.ProjectFolder;
+import net.imagej.ImgPlus;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.basictypeaccess.array.ByteArray;
@@ -30,9 +32,9 @@ import static org.junit.Assert.assertTrue;
 
 public class SegmentationModelTest {
 
-	private ArrayImg< ByteType, ByteArray > image = ArrayImgs.bytes(2,2,2);
+	private ImgPlus< ByteType > image = ImgPlus.wrap( ArrayImgs.bytes(2,2,2) );
 	private Context context = new Context();
-	private ArrayImg< ByteType, ByteArray > bwImage = ArrayImgs.bytes(new byte[]{1,0,0,0,0,0,0,0}, 2,2,2);
+	private ImgPlus< ByteType > bwImage = ImgPlus.wrap( ArrayImgs.bytes(new byte[]{1,0,0,0,0,0,0,0}, 2,2,2) );
 
 	@Test
 	public void testSerializeSingleLabeling() throws IOException {

@@ -8,6 +8,9 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import net.imagej.ImgPlus;
+import net.imagej.axis.Axes;
+import net.imglib2.img.VirtualStackAdapter;
 import org.scijava.Context;
 import org.scijava.log.Logger;
 import org.scijava.plugin.Parameter;
@@ -48,10 +51,10 @@ public class IndagoLabkitPlugin implements IndagoSegmentationPlugin, AutoCloseab
 	}
 
 	@Override
-	public void setProjectFolderAndData( final ProjectFolder projectFolder, final RandomAccessibleInterval< DoubleType > rawData ) {
+	public void setProjectFolderAndData( final ProjectFolder projectFolder, final ImgPlus< DoubleType > rawData ) {
 		this.projectFolder = projectFolder;
 		this.rawData = rawData;
-		this.panel = new LabkitPanel( context, this, log );
+		this.panel = new LabkitPanel( context, log, projectFolder, rawData );
 	}
 
 	@Override
@@ -73,13 +76,4 @@ public class IndagoLabkitPlugin implements IndagoSegmentationPlugin, AutoCloseab
 	public void close() {
 		panel.close();
 	}
-
-	public ProjectFolder getProjectFolder() {
-		return this.projectFolder;
-	}
-
-	public RandomAccessibleInterval< DoubleType > getRawData() {
-		return this.rawData;
-	}
-
 }

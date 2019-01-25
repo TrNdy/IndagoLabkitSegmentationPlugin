@@ -1,6 +1,7 @@
 
 package com.indago.tr2d.plugins.seg;
 
+import net.imagej.ImgPlus;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.labkit.inputimage.DefaultInputImage;
 import net.imglib2.labkit.models.Holder;
@@ -74,7 +75,7 @@ public class ThresholdButton {
 
 	public static void main(String... args) {
 		SegmentationModel segmentationModel = new SegmentationModel(
-			ArrayImgs.unsignedBytes(100, 100, 100),
+				ImgPlus.wrap( ArrayImgs.unsignedBytes(100, 100, 100) ),
 			new Context());
 		JFrame frame = new JFrame();
 		frame.add(new SegmenterPanel(segmentationModel, ignore -> new JPopupMenu())

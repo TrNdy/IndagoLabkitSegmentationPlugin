@@ -11,6 +11,10 @@ import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
+import net.imagej.ImgPlus;
+import net.imagej.axis.Axes;
+import net.imagej.axis.DefaultLinearAxis;
+import net.imglib2.img.VirtualStackAdapter;
 import org.scijava.Context;
 import org.scijava.ui.behaviour.util.RunnableAction;
 
@@ -56,9 +60,9 @@ public class LabkitPluginDemo {
 
 		final String path = "/home/arzt/Documents/Notes/Tr2d/Project";
 		final ProjectFolder projectFolder = new ProjectFolder( "TEST", new File( path + "/segmentation" ) );
-		final ImagePlus imagePlus = new ImagePlus( path + "/raw.tif" );
-
-		plugin.setProjectFolderAndData( projectFolder, DoubleTypeImgLoader.wrapEnsureType( imagePlus ) );
+		final ImgPlus imgPlus = VirtualStackAdapter.wrap(new ImagePlus( path + "/raw.tif" ));
+		((DefaultLinearAxis) imgPlus.axis(2)).setType(Axes.TIME);
+		plugin.setProjectFolderAndData( projectFolder, DoubleTypeImgLoader.wrapEnsureType( imgPlus ) );
 		return plugin;
 	}
 

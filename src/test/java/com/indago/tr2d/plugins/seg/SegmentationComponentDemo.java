@@ -2,8 +2,10 @@
 package com.indago.tr2d.plugins.seg;
 
 import ij.ImagePlus;
+import net.imagej.ImgPlus;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
+import net.imglib2.img.VirtualStackAdapter;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.integer.IntType;
@@ -26,7 +28,7 @@ public class SegmentationComponentDemo {
 
 	private SegmentationComponentDemo() {
 		JFrame frame = setupFrame();
-		Img<? extends NumericType<?>> image = ImageJFunctions.wrap(new ImagePlus(
+		ImgPlus image = VirtualStackAdapter.wrap(new ImagePlus(
 			"/home/arzt/Documents/Notes/Tr2d/ProjectFiles/raw.tif"));
 		Context context = new Context();
 		model = new SegmentationModel(image, context);

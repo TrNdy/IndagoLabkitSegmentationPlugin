@@ -2,9 +2,10 @@
 package com.indago.tr2d.plugins.seg;
 
 import com.indago.io.ProjectFolder;
+import net.imagej.ImgPlus;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.cell.CellGrid;
-import net.imglib2.labkit.inputimage.DefaultInputImage;
+import net.imglib2.labkit.inputimage.DatasetInputImage;
 import net.imglib2.labkit.inputimage.InputImage;
 import net.imglib2.labkit.labeling.Labeling;
 import net.imglib2.labkit.models.DefaultHolder;
@@ -47,27 +48,18 @@ public class SegmentationModel implements
 	private final Context context;
 
 	public SegmentationModel(
-			RandomAccessibleInterval< ? extends NumericType< ? > > image,
+			ImgPlus< ? extends NumericType< ? > > image,
 			Context context)
 	{
 		this.context = context;
-		this.inputImage = initInputImage(image, true);
+		this.inputImage = new DatasetInputImage(image);
 		this.compatibleImage = inputImage.imageForSegmentation();
 		this.grid = LabkitUtils.suggestGrid(compatibleImage, inputImage.isTimeSeries());
 		MySegmentationItem segmentationItem = addSegmenter();
 		this.selectedSegmenter = new DefaultHolder<>(segmentationItem);
 		this.selectedSegmenter.notifier().add(this::selectedSegmenterChanged);
 		this.imageLabelingModel = new ImageLabelingModel(inputImage.showable(),
-			segmentationItem.labeling(), true, inputImage.getDefaultLabelingFilename());
-	}
-
-	private static DefaultInputImage initInputImage(
-			RandomAccessibleInterval<? extends NumericType<?>> image,
-			boolean isTimeSeries)
-	{
-		DefaultInputImage defaultInputImage = new DefaultInputImage(image);
-		defaultInputImage.setTimeSeries(isTimeSeries);
-		return defaultInputImage;
+			segmentationItem.labeling(), inputImage.isTimeSeries(), inputImage.getDefaultLabelingFilename());
 	}
 
 	private void selectedSegmenterChanged() {
@@ -162,7 +154,7 @@ public class SegmentationModel implements
 	// -- Serialization --
 
 	public static SegmentationModel open(
-			RandomAccessibleInterval< ? extends NumericType< ? > > image,
+			ImgPlus< ? extends NumericType< ? > > image,
 			Context context, ProjectFolder projectFolder) throws IOException
 	{
 		SegmentationModel result = new SegmentationModel(image, context);
