@@ -1,50 +1,59 @@
 
 package com.indago.tr2d.plugins.seg;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
+import com.indago.io.DoubleTypeImgLoader;
+import com.indago.io.ProjectFolder;
+import com.indago.plugins.seg.IndagoSegmentationPlugin;
+import ij.ImagePlus;
+import net.imagej.ImgPlus;
+import net.imglib2.img.VirtualStackAdapter;
+import net.imglib2.img.display.imagej.ImageJFunctions;
+import org.scijava.Context;
+import org.scijava.ui.behaviour.util.RunnableAction;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-
-import net.imagej.ImgPlus;
-import net.imagej.axis.Axes;
-import net.imagej.axis.DefaultLinearAxis;
-import net.imglib2.img.VirtualStackAdapter;
-import org.scijava.Context;
-import org.scijava.ui.behaviour.util.RunnableAction;
-
-import com.indago.io.DoubleTypeImgLoader;
-import com.indago.io.ProjectFolder;
-import com.indago.plugins.seg.IndagoSegmentationPlugin;
-
-import ij.ImagePlus;
-import net.imglib2.img.display.imagej.ImageJFunctions;
-
 public class LabkitPluginDemo {
+
+	public static void main(final String... args) throws IOException {
+		final File path = openDialog();
+		final File folder = new File(path,  "segmentation");
+		final ImgPlus image = VirtualStackAdapter
+				.wrap(new ImagePlus( new File( path, "raw.tif").getAbsolutePath() ));
+		demo(folder, image);
+	}
+
+	private static File openDialog() {
+		JFileChooser dialog = new JFileChooser();
+		dialog.setDialogTitle("Select Tr2d / Metaseg directory");
+		dialog.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		dialog.showOpenDialog(null);
+		return dialog.getSelectedFile();
+	}
 
 	private final IndagoSegmentationPlugin plugin;
 
-	public static void main(final String... args) throws IOException {
-		new LabkitPluginDemo();
+	public static LabkitPluginDemo demo(File folder, ImgPlus image) throws IOException
+	{
+		return new LabkitPluginDemo(initPlugin(folder, image));
 	}
 
-	private LabkitPluginDemo() throws IOException {
-		plugin = initPlugin();
+	private LabkitPluginDemo(IndagoSegmentationPlugin plugin) throws IOException {
+		this.plugin = plugin;
 		final JFrame frame = setupFrame();
-		frame.add(plugin.getInteractionPanel());
+		frame.add(this.plugin.getInteractionPanel());
 		frame.add(initBottomPanel(), BorderLayout.PAGE_END);
 		frame.setVisible(true);
 		frame.addWindowListener(new WindowAdapter() {
 
 			@Override public void windowClosing(final WindowEvent windowEvent) {
 				try {
-					if(plugin instanceof AutoCloseable)
-						((AutoCloseable) plugin).close();
+					plugin.close();
 				}
 				catch (final Exception e) {
 					e.printStackTrace();
@@ -54,15 +63,12 @@ public class LabkitPluginDemo {
 		});
 	}
 
-	private static IndagoSegmentationPlugin initPlugin() throws IOException {
+	private static IndagoSegmentationPlugin initPlugin(File folder, ImgPlus image) throws IOException {
 		final IndagoSegmentationPlugin plugin = new IndagoLabkitPlugin();
 		new Context().inject(plugin);
-
-		final String path = "/home/arzt/Documents/Notes/Tr2d/Project";
-		final ProjectFolder projectFolder = new ProjectFolder( "TEST", new File( path + "/segmentation" ) );
-		final ImgPlus imgPlus = VirtualStackAdapter.wrap(new ImagePlus( path + "/raw.tif" ));
-		((DefaultLinearAxis) imgPlus.axis(2)).setType(Axes.TIME);
-		plugin.setProjectFolderAndData( projectFolder, DoubleTypeImgLoader.wrapEnsureType( imgPlus ) );
+		final ProjectFolder projectFolder = new ProjectFolder( "TEST",
+				folder);
+		plugin.setProjectFolderAndData( projectFolder, DoubleTypeImgLoader.wrapEnsureType(image) );
 		return plugin;
 	}
 

@@ -17,6 +17,7 @@ import net.imglib2.labkit.utils.RandomAccessibleContainer;
 import net.imglib2.realtransform.AffineTransform3D;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.NumericType;
+import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.type.volatiles.VolatileARGBType;
 import net.imglib2.type.volatiles.VolatileFloatType;
 import net.imglib2.util.ConstantUtils;
@@ -108,8 +109,9 @@ public class PredictionLayer implements BdvLayer {
 				.get())].get());
 		};
 
+		final RandomAccessibleInterval< FloatType > prediction = selected.prediction();
 		RandomAccessibleInterval<VolatileFloatType> source = Views.hyperSlice(
-			VolatileViews.wrapAsVolatile(selected.prediction(), queue), 3, 1);
+			VolatileViews.wrapAsVolatile(prediction, queue), prediction.numDimensions() - 1, 1);
 		return Converters.convert(source, conv, new VolatileARGBType());
 	}
 
