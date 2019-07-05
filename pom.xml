@@ -19,7 +19,7 @@
 
 	<groupId>com.indago</groupId>
 	<artifactId>IndagoLabkitSegmentationPlugin</artifactId>
-	<version>0.1.9-SNAPSHOT</version>
+	<version>0.1.9</version>
 
 	<name>IndagoLabkitSegmentationPlugin</name>
 	<description>Segmentation plugin for Indago projects, based on the one and only Labkit</description>
@@ -125,7 +125,7 @@
 	<scm>
 		<connection>scm:git:git://github.com/TrNdy/Tr2dLabkitSegmentationPlugin</connection>
 		<developerConnection>scm:git:git@github.com:TrNdy/Tr2dLabkitSegmentationPlugin</developerConnection>
-		<tag>HEAD</tag>
+		<tag>IndagoLabkitSegmentationPlugin-0.1.9</tag>
 		<url>https://github.com/TrNdy/Tr2dLabkitSegmentationPlugin</url>
 	</scm>
 	<issueManagement>
