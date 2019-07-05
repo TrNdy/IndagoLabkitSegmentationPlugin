@@ -19,7 +19,7 @@
 
 	<groupId>com.indago</groupId>
 	<artifactId>IndagoLabkitSegmentationPlugin</artifactId>
-	<version>0.1.9-SNAPSHOT</version>
+	<version>0.1.10-SNAPSHOT</version>
 
 	<name>IndagoLabkitSegmentationPlugin</name>
 	<description>Segmentation plugin for Indago projects, based on the one and only Labkit</description>
